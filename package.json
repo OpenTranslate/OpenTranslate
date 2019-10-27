@@ -1,0 +1,54 @@
+{
+  "name": "root",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "lint": "eslint --no-eslintrc -c .eslintrc.js ./*.js ./scripts/**/*.js ./packages/**/*.ts",
+    "test": "lerna run build && lerna run test",
+    "build": "lerna run build",
+    "create-translator": "node scripts/create-translator",
+    "commit": "git-cz",
+    "release": "lerna version --conventional-commits",
+    "ship": "lerna run build && lerna publish from-package"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.138",
+    "@typescript-eslint/eslint-plugin": "^2.3.0",
+    "@typescript-eslint/parser": "^2.3.0",
+    "axios-mock-adapter": "^1.17.0",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "ejs": "^2.7.1",
+    "eslint": "^6.4.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "fast-glob": "^3.0.4",
+    "fs-extra": "^8.1.0",
+    "husky": "^3.0.5",
+    "jest": "^24.9.0",
+    "lerna": "^3.16.4",
+    "lodash": "^4.17.15",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3",
+    "yargs": "^14.0.0"
+  }
+}

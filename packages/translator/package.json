@@ -1,0 +1,30 @@
+{
+  "name": "@opentranslate/translator",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.4",
+  "description": "Common APIs of translator in OpenTranslate Standard.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "keywords": [
+    "OpenTranslate",
+    "translate",
+    "translator"
+  ],
+  "repository": "OpenTranslate/OpenTranslate",
+  "homepage": "https://github.com/OpenTranslate/OpenTranslate/tree/master/packages/translator",
+  "bugs": "https://github.com/opentranslate/opentranslate/issues/",
+  "author": "OpenTranslate",
+  "license": "MIT",
+  "dependencies": {
+    "@opentranslate/languages": "^1.0.4",
+    "axios": "^0.19.0",
+    "franc-min": "^4.1.0"
+  }
+}

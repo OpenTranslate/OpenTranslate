@@ -1,0 +1,32 @@
+{
+  "name": "@opentranslate/languages",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.4",
+  "description": "Shared language identifiers and locales for OpenTranslate projects.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "files": [
+    "locales",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "OpenTranslate",
+    "translate",
+    "language",
+    "dictionary"
+  ],
+  "repository": "OpenTranslate/OpenTranslate",
+  "homepage": "https://github.com/OpenTranslate/OpenTranslate/tree/master/packages/languages",
+  "bugs": "https://github.com/opentranslate/opentranslate/issues/",
+  "author": "OpenTranslate",
+  "license": "MIT"
+}

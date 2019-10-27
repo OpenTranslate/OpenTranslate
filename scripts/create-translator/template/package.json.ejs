@@ -1,0 +1,28 @@
+{
+  "name": "@opentranslate/<%- engine %>",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "<%- version %>",
+  "description": "<%- engineTitled %> translator with OpenTranslate API.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "keywords": [
+    "OpenTranslate",
+    "translate",
+    "translator"
+  ],
+  "repository": "OpenTranslate/OpenTranslate",
+  "homepage": "https://github.com/OpenTranslate/OpenTranslate/tree/master/packages/service-<%- engine %>",
+  "bugs": "https://github.com/opentranslate/opentranslate/issues/",
+  "author": "OpenTranslate",
+  "license": "MIT",
+  "dependencies": {
+    "@opentranslate/translator": "^<%- version %>"
+  }
+}

@@ -1,0 +1,47 @@
+import {
+  Language,
+  Translator,
+  TranslateQueryResult
+} from "@opentranslate/translator";
+
+const langMap: [Language, string][] = [
+  ["auto", "auto"],
+  ["zh-CN", "zh-CHS"],
+  ["zh-TW", "zh-CHT"],
+  ["en", "en"]
+];
+
+export interface <%- engineTitled %>Config {}
+
+export class <%- engineTitled %> extends Translator<<%- engineTitled %>Config> {
+  /** Translator lang to custom lang */
+  private static readonly langMap = new Map(langMap);
+
+  /** Custom lang to translator lang */
+  private static readonly langMapReverse = new Map(
+    langMap.map(([translatorLang, lang]) => [lang, translatorLang])
+  );
+
+  protected async query(
+    text: string,
+    from: Language,
+    to: Language,
+    config: <%- engineTitled %>Config
+  ): Promise<TranslateQueryResult> {
+
+  }
+
+  readonly name = "<%- engine %>";
+
+  getSupportLanguages(): Language[] {
+    return [...<%- engineTitled %>.langMap.keys()];
+  }
+
+  // async detect(text: string): Promise<Language> {
+  // }
+
+  // async textToSpeech(text: string, lang: Language): Promise<string | null> {
+  // }
+}
+
+export default <%- engineTitled %>;
