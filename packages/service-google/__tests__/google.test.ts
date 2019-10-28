@@ -1,7 +1,9 @@
 import { Google } from "../src";
 
 describe("Dict Google", () => {
-  const google = new Google();
+  const google = new Google({
+    config: { token: process.env.GOOGLE_TOKEN as string }
+  });
 
   it("should translate successfully", async () => {
     const result = await google.translate("I love you", "en", "zh-CN");

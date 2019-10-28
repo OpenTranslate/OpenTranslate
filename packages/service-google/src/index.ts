@@ -145,6 +145,10 @@ export class Google extends Translator<GoogleConfig> {
     to: Language,
     config: GoogleConfig
   ): Promise<TranslateQueryResult> {
+    if (!config.token) {
+      throw new Error("API_SERVER_ERROR");
+    }
+
     const { data: result } = await this.axios.get<[string[], null, string]>(
       "https://translate.googleapis.com/translate_a/single?" +
         qs.stringify({
