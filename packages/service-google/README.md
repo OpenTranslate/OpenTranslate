@@ -24,7 +24,10 @@ npm i @opentranslate/google
 ```
 import Google from '@opentranslate/google'
 
-const google = new Google()
+// access token from https://cloud.google.com/translate/
+const google = new Google({
+  token: 'xxxxx'
+})
 
 google.translate('text').then(console.log)
 ```
