@@ -23,8 +23,11 @@ npm i @opentranslate/youdao
 
 ```
 import Youdao from '@opentranslate/youdao'
-
-const youdao = new Youdao()
+//please visit http://ai.youdao.com/gw.s for more information.
+const youdao = new Youdao(config: {
+    appKey: "your appKey",
+    key: "your Key"
+})
 
 youdao.translate('text').then(console.log)
 ```
