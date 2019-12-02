@@ -1,0 +1,29 @@
+{
+  "name": "@opentranslate/youdao",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.4",
+  "description": "Youdao translator with OpenTranslate API.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "keywords": [
+    "OpenTranslate",
+    "translate",
+    "translator"
+  ],
+  "repository": "OpenTranslate/OpenTranslate",
+  "homepage": "https://github.com/OpenTranslate/OpenTranslate/tree/master/packages/service-youdao",
+  "bugs": "https://github.com/opentranslate/opentranslate/issues/",
+  "author": "OpenTranslate",
+  "license": "MIT",
+  "dependencies": {
+    "@opentranslate/translator": "^1.0.4",
+    "js-sha256": "^0.9.0"
+  }
+}
