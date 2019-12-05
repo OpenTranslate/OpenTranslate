@@ -27,8 +27,5 @@
     "@types/node": "^12.11.7",
     "@types/qs": "^6.5.3",
     "qs": "^6.8.0"
-  },
-  "devDependencies": {
-    "dotenv": "^8.2.0"
   }
 }

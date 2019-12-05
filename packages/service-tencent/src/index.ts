@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Language,
   Translator,
@@ -7,6 +8,9 @@ import SHA256 from "crypto-js/sha256";
 import HMACSHA256 from "crypto-js/hmac-sha256";
 import EncHEX from "crypto-js/enc-hex";
 import { AxiosPromise } from "axios";
+
+declare const browser: any;
+declare const chrome: any;
 
 const langMap: [Language, string][] = [
   ["auto", "auto"],
@@ -49,6 +53,53 @@ export class Tencent extends Translator<TencentConfig> {
     return `${year}-${month}-${date}`;
   }
 
+  private static isStubHeaders: { [host: string]: boolean } = {};
+
+  private stubHeaders(host: string): void {
+    if (this.env !== "ext" || Tencent.isStubHeaders[host]) {
+      return;
+    }
+    Tencent.isStubHeaders[host] = true;
+
+    const extGlobal =
+      typeof browser !== "undefined"
+        ? browser
+        : typeof chrome !== "undefined"
+        ? chrome
+        : null;
+
+    const extraInfoSpec = ["blocking", "requestHeaders"];
+
+    // For Chrome >= 72
+    // https://developer.chrome.com/extensions/webRequest#life_cycle_footnote
+    if (
+      extGlobal.webRequest.OnBeforeSendHeadersOptions &&
+      extGlobal.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty(
+        "EXTRA_HEADERS"
+      )
+    ) {
+      extraInfoSpec.push("extraHeaders");
+    }
+
+    extGlobal.webRequest.onBeforeSendHeaders.addListener(
+      (details: any) => {
+        if (details && details.requestHeaders) {
+          const headers = details.requestHeaders.filter(
+            (header: any) => !/Host/i.test(header.name)
+          );
+
+          headers.push({ name: "Host", value: host });
+
+          return { requestHeaders: headers };
+        }
+
+        return details;
+      },
+      { urls: [`*://${host}/*`] },
+      extraInfoSpec
+    );
+  }
+
   private signedRequest<R = {}>({
     secretId,
     secretKey,
@@ -64,6 +115,9 @@ export class Tencent extends Translator<TencentConfig> {
     service: string;
     version: string;
   }): AxiosPromise<R> {
+    const host = `${service}.tencentcloudapi.com`;
+    this.stubHeaders(host);
+
     const now = new Date();
     const timestamp = `${new Date().valueOf()}`.slice(0, 10);
 
@@ -72,7 +126,7 @@ export class Tencent extends Translator<TencentConfig> {
       "/",
       "",
       "content-type:application/json; charset=utf-8",
-      "host:tmt.tencentcloudapi.com",
+      `host:${host}`,
       "",
       "content-type;host",
       SHA256(payload).toString(EncHEX)
@@ -83,13 +137,13 @@ export class Tencent extends Translator<TencentConfig> {
     const StringToSign: string = [
       "TC3-HMAC-SHA256",
       timestamp,
-      `${datestamp}/tmt/tc3_request`,
+      `${datestamp}/${service}/tc3_request`,
       SHA256(CanonicalRequest).toString(EncHEX)
     ].join("\n");
 
     const SecretDate = HMACSHA256(datestamp, `TC3${secretKey}`);
 
-    const SecretService = HMACSHA256("tmt", SecretDate);
+    const SecretService = HMACSHA256(service, SecretDate);
 
     const SecretSigning = HMACSHA256("tc3_request", SecretService);
 
@@ -97,16 +151,16 @@ export class Tencent extends Translator<TencentConfig> {
       EncHEX
     );
 
-    return this.request<R>("https://tmt.tencentcloudapi.com", {
+    return this.request<R>(`https://${service}.tencentcloudapi.com`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        Host: "tmt.tencentcloudapi.com",
+        Host: host,
         "X-TC-Action": action,
         "X-TC-Timestamp": timestamp,
         "X-TC-Region": "ap-beijing",
         "X-TC-Version": version,
-        Authorization: `TC3-HMAC-SHA256 Credential=${secretId}/${datestamp}/tmt/tc3_request, SignedHeaders=content-type;host, Signature=${Signature}`
+        Authorization: `TC3-HMAC-SHA256 Credential=${secretId}/${datestamp}/${service}/tc3_request, SignedHeaders=content-type;host, Signature=${Signature}`
       },
       data: payload
     });

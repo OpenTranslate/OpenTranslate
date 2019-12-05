@@ -25,10 +25,8 @@
   "dependencies": {
     "@opentranslate/translator": "^1.1.0",
     "@types/md5": "^2.1.33",
+    "@types/qs": "^6.5.3",
     "md5": "^2.2.1",
     "qs": "^6.8.0"
-  },
-  "devDependencies": {
-    "dotenv": "^8.2.0"
   }
 }
