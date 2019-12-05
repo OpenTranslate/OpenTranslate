@@ -35,6 +35,7 @@
     "axios-mock-adapter": "^1.17.0",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
+    "dotenv": "^8.2.0",
     "ejs": "^2.7.1",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
