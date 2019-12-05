@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Sogou translator with OpenTranslate API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
