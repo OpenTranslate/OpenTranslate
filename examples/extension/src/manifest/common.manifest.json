@@ -1,0 +1,18 @@
+{
+  "version": "0.0.0",
+
+  "manifest_version": 2,
+
+  "name": "OpenTranslate Example",
+
+  "description": "OpenTranslate Example",
+
+  "permissions": [
+    "<all_urls>",
+    "cookies",
+    "storage",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking"
+  ]
+}
