@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.4",
+  "version": "1.1.2",
   "description": "Sogou translator with OpenTranslate API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,9 +24,9 @@
   "license": "MIT",
   "dependencies": {
     "@opentranslate/translator": "^1.0.4",
-    "@types/qs": "^6.5.3",
-    "qs": "^6.8.0",
     "@types/md5": "^2.1.33",
-    "md5": "^2.2.1"
+    "@types/qs": "^6.5.3",
+    "md5": "^2.2.1",
+    "qs": "^6.8.0"
   }
 }
