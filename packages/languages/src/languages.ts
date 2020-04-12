@@ -106,6 +106,7 @@ export const languages = [
   "to",
   "tr",
   "ty",
+  "ug",
   "uk",
   "ur",
   "uz",
