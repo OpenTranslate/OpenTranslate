@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shared language identifiers and locales for OpenTranslate projects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
