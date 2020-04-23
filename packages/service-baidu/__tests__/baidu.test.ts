@@ -9,7 +9,7 @@ describe("Dict Baidu", () => {
     }
   });
 
-  it("should translate successfully", async () => {
+  it("should translate en2zh successfully", async () => {
     const En2Zh = await baidu.translate("I love you", "auto", "zh-CN");
 
     expect(En2Zh).toEqual({
@@ -25,6 +25,27 @@ describe("Dict Baidu", () => {
       /** 译文 */
       trans: {
         paragraphs: [expect.stringContaining("爱")],
+        tts: expect.any(String)
+      }
+    });
+  }, 9000);
+
+  it("should translate zh2en successfully", async () => {
+    const zh2En = await baidu.translate("我爱你", "auto", "en");
+
+    expect(zh2En).toEqual({
+      engine: "baidu",
+      text: "我爱你",
+      from: "zh-CN",
+      to: "en",
+      /** 原文 */
+      origin: {
+        paragraphs: ["我爱你"],
+        tts: expect.any(String)
+      },
+      /** 译文 */
+      trans: {
+        paragraphs: [expect.stringContaining("I love you")],
         tts: expect.any(String)
       }
     });
