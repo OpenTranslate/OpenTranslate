@@ -62,8 +62,8 @@ export class Baidu extends Translator<BaiduConfig> {
     };
 
     type BaiduTranslateResult = {
-      from: Language;
-      to: Language;
+      from: string;
+      to: string;
       trans_result: Array<{
         dst: string;
         src: string;
@@ -104,14 +104,15 @@ export class Baidu extends Translator<BaiduConfig> {
       from: langDetected
     } = data as BaiduTranslateResult;
     const transParagraphs = transResult.map(({ dst }) => dst);
+    const detectedFrom = Baidu.langMapReverse.get(langDetected) as Language;
 
     return {
       text,
-      from: Baidu.langMapReverse.get(langDetected) as Language,
+      from: detectedFrom,
       to,
       origin: {
         paragraphs: transResult.map(({ src }) => src),
-        tts: await this.textToSpeech(text, langDetected)
+        tts: await this.textToSpeech(text, detectedFrom)
       },
       trans: {
         paragraphs: transParagraphs,
