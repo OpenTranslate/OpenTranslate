@@ -7,61 +7,40 @@ import {
 import md5 from "md5";
 import qs from "qs";
 
+// 百度垂直领域翻译
+export const domains = ["medicine", "electronics", "mechanics"];
+export type Domain = typeof domains[number];
+
 const langMap: [Language, string][] = [
   ["auto", "auto"],
   ["zh-CN", "zh"],
-  ["en", "en"],
-  ["yue", "yue"],
-  ["wyw", "wyw"],
-  ["ja", "jp"],
-  ["ko", "kor"],
-  ["fr", "fra"],
-  ["es", "spa"],
-  ["th", "th"],
-  ["ar", "ara"],
-  ["ru", "ru"],
-  ["pt", "pt"],
-  ["de", "de"],
-  ["it", "it"],
-  ["el", "el"],
-  ["nl", "nl"],
-  ["pl", "pl"],
-  ["bg", "bul"],
-  ["et", "est"],
-  ["da", "dan"],
-  ["fi", "fin"],
-  ["cs", "cs"],
-  ["ro", "rom"],
-  ["sl", "slo"],
-  ["sv", "swe"],
-  ["hu", "hu"],
-  ["zh-TW", "cht"],
-  ["vi", "vie"]
+  ["en", "en"]
 ];
 
-export interface BaiduConfig {
-  placeholder?: string;
+export interface BaiduDomainConfig {
   appid: string;
   key: string;
+  domain: Domain;
 }
 
-export class Baidu extends Translator<BaiduConfig> {
-  readonly name = "baidu";
+export class BaiduDomain extends Translator<BaiduDomainConfig> {
+  readonly name = "baidu-domain";
 
-  readonly endpoint = "https://api.fanyi.baidu.com/api/trans/vip/translate";
+  readonly endpoint =
+    "https://fanyi-api.baidu.com/api/trans/vip/fieldtranslate";
 
   protected async query(
     text: string,
     from: Language,
     to: Language,
-    config: BaiduConfig
+    config: BaiduDomainConfig
   ): Promise<TranslateQueryResult> {
-    type BaiduTranslateError = {
+    type BaiduDomainTranslateError = {
       error_code: "54001" | string;
       error_msg: "Invalid Sign" | string;
     };
 
-    type BaiduTranslateResult = {
+    type BaiduDomainTranslateResult = {
       from: string;
       to: string;
       trans_result: Array<{
@@ -72,29 +51,32 @@ export class Baidu extends Translator<BaiduConfig> {
 
     const salt = Date.now();
     const { endpoint } = this;
-    const { appid, key } = config;
+    const { appid, key, domain } = config;
 
-    const res = await this.request<BaiduTranslateResult | BaiduTranslateError>(
-      endpoint,
-      {
-        params: {
-          from: Baidu.langMap.get(from),
-          to: Baidu.langMap.get(to),
-          q: text,
-          salt,
-          appid,
-          sign: md5(appid + text + salt + key)
-        }
+    const res = await this.request<
+      BaiduDomainTranslateResult | BaiduDomainTranslateError
+    >(endpoint, {
+      params: {
+        from: BaiduDomain.langMap.get(from),
+        to: BaiduDomain.langMap.get(to),
+        q: text,
+        salt,
+        appid,
+        domain,
+        sign: md5(appid + text + salt + domain + key)
       }
-    ).catch(() => {
+    }).catch(() => {
       throw new TranslateError("NETWORK_ERROR");
     });
 
     const { data } = res;
 
-    if ((data as BaiduTranslateError).error_code) {
+    if ((data as BaiduDomainTranslateError).error_code) {
       console.error(
-        new Error("[Baidu service]" + (data as BaiduTranslateError).error_msg)
+        new Error(
+          "[BaiduDomain service]" +
+            (data as BaiduDomainTranslateError).error_msg
+        )
       );
       throw new TranslateError("API_SERVER_ERROR");
     }
@@ -102,9 +84,11 @@ export class Baidu extends Translator<BaiduConfig> {
     const {
       trans_result: transResult,
       from: langDetected
-    } = data as BaiduTranslateResult;
+    } = data as BaiduDomainTranslateResult;
+    const detectedFrom = BaiduDomain.langMapReverse.get(
+      langDetected
+    ) as Language;
     const transParagraphs = transResult.map(({ dst }) => dst);
-    const detectedFrom = Baidu.langMapReverse.get(langDetected) as Language;
 
     return {
       text,
@@ -130,12 +114,12 @@ export class Baidu extends Translator<BaiduConfig> {
   );
 
   getSupportLanguages(): Language[] {
-    return [...Baidu.langMap.keys()];
+    return [...BaiduDomain.langMap.keys()];
   }
 
   async textToSpeech(text: string, lang: Language): Promise<string> {
     return `http://tts.baidu.com/text2audio?${qs.stringify({
-      lan: Baidu.langMap.get(lang !== "auto" ? lang : "zh-CN") || "zh",
+      lan: BaiduDomain.langMap.get(lang !== "auto" ? lang : "zh-CN") || "zh",
       ie: "UTF-8",
       spd: 5,
       text
@@ -143,4 +127,4 @@ export class Baidu extends Translator<BaiduConfig> {
   }
 }
 
-export default Baidu;
+export default BaiduDomain;
