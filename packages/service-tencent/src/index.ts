@@ -8,6 +8,7 @@ import SHA256 from "crypto-js/sha256";
 import HMACSHA256 from "crypto-js/hmac-sha256";
 import EncHEX from "crypto-js/enc-hex";
 import { AxiosPromise } from "axios";
+import { decodeHTMLEntities } from "./html-entities";
 
 declare const browser: any;
 declare const chrome: any;
@@ -203,7 +204,7 @@ export class Tencent extends Translator<TencentConfig> {
         paragraphs: text.split(/\n+/)
       },
       trans: {
-        paragraphs: data.Response.TargetText.split(/\n+/)
+        paragraphs: decodeHTMLEntities(data.Response.TargetText).split(/\n+/)
       }
     };
   }
