@@ -22,7 +22,11 @@ const langMap: [Language, string][] = [
   ["zh-CN", "zh-CHS"],
   ["ja", "ja"],
   ["ko", "ko"],
-  ["fr", "fr"]
+  ["fr", "fr"],
+  ["ar", "ar"],
+  ["id", "id"],
+  ["vi", "vi"],
+  ["it", "it"]
 ];
 
 export interface YoudaoConfig {
