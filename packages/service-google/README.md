@@ -24,9 +24,12 @@ npm i @opentranslate/google
 ```
 import Google from '@opentranslate/google'
 
-// access token from https://cloud.google.com/translate/
 const google = new Google({
-  token: 'xxxxx'
+  order: ['com', 'cn'],
+  // search all at the same time
+  concurrent: true,
+  // googleapi as fallback
+  apiAsFallback: true
 })
 
 google.translate('text').then(console.log)

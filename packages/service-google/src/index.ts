@@ -3,6 +3,7 @@ import {
   Translator,
   TranslateQueryResult
 } from "@opentranslate/translator";
+import { getTK, fetchScheduled } from "./api";
 import qs from "qs";
 
 const langMap: [Language, string][] = [
@@ -114,14 +115,17 @@ const langMap: [Language, string][] = [
   ["zu", "zu"]
 ];
 
+interface GoogleDataResult {
+  base: string;
+  data: [string[], null, string];
+}
+
 export interface GoogleConfig {
-  token: string;
-  /** @deprecated */
-  order?: Array<"cn" | "com" | "api">;
-  /** @deprecated */
-  concurrent?: boolean;
-  /** @deprecated */
-  apiAsFallback?: boolean;
+  /** Network request priority */
+  order: Array<"cn" | "com" | "api">;
+  concurrent: boolean;
+  /** Only request API when others fail */
+  apiAsFallback: boolean;
 }
 
 export class Google extends Translator<GoogleConfig> {
@@ -133,8 +137,69 @@ export class Google extends Translator<GoogleConfig> {
     langMap.map(([translatorLang, lang]) => [lang, translatorLang])
   );
 
+  private token: {
+    value?: {
+      tk1: number;
+      tk2: number;
+    };
+    date: number;
+  } = { date: 0 };
+
+  private async fetchWithToken(
+    /** 'com' or 'cn' */
+    tld: string,
+    text: string,
+    from: string,
+    to: string
+  ): Promise<GoogleDataResult> {
+    if (!this.token.value) {
+      throw new Error("API_SERVER_ERROR");
+    }
+
+    const base = `https://translate.google.${tld}`;
+
+    const { data } = await this.axios.get<GoogleDataResult["data"]>(
+      `${base}/translate_a/single?` +
+        qs.stringify(
+          {
+            client: "webapp",
+            sl: from,
+            tl: to,
+            hl: "en",
+            dt: ["at", "bd", "ex", "ld", "md", "qca", "rw", "rm", "ss", "t"],
+            source: "bh",
+            ssel: "0",
+            tsel: "0",
+            kc: "1",
+            tk: await getTK(text, tld),
+            q: text
+          },
+          { indices: false }
+        )
+    );
+
+    return { base, data };
+  }
+
+  private async fetchWithoutToken(
+    text: string,
+    from: string,
+    to: string
+  ): Promise<GoogleDataResult> {
+    const { data } = await this.axios.get<GoogleDataResult["data"]>(
+      "https://translate.googleapis.com/translate_a/single?" +
+        qs.stringify({
+          client: "gtx",
+          dt: "t",
+          sl: from,
+          tl: to,
+          q: text
+        })
+    );
+    return { base: "https://translate.google.cn", data };
+  }
+
   config: GoogleConfig = {
-    token: "",
     order: ["cn", "com"],
     concurrent: true,
     apiAsFallback: true
@@ -146,41 +211,51 @@ export class Google extends Translator<GoogleConfig> {
     to: Language,
     config: GoogleConfig
   ): Promise<TranslateQueryResult> {
-    if (!config.token) {
-      throw new Error("API_SERVER_ERROR");
-    }
+    let result = await fetchScheduled(
+      config.order.map(value => (): Promise<GoogleDataResult> =>
+        value === "api"
+          ? this.fetchWithoutToken(text, from, to)
+          : this.fetchWithToken(value, text, from, to)
+      ),
+      config.concurrent
+    ).catch(() => {});
 
-    const { data: result } = await this.axios.get<[string[], null, string]>(
-      "https://translate.googleapis.com/translate_a/single?" +
-        qs.stringify({
-          client: "gtx",
-          dt: "t",
-          sl: from,
-          tl: to,
-          q: text,
-          tk: config.token
-        })
-    );
+    if (!result && config.apiAsFallback) {
+      result = await this.fetchWithoutToken(text, from, to);
+    }
 
     if (!result) {
       throw new Error("NETWORK_ERROR");
     }
 
-    if (!result[0] || result[0].length <= 0) {
+    if (!result.data[0] || result.data[0].length <= 0) {
       throw new Error("API_SERVER_ERROR");
     }
 
-    const transParagraphs = result[0].map(item => item[0]).filter(Boolean);
+    const transText = result.data[0]
+      .map(item => item[0])
+      .filter(Boolean)
+      .join(" ");
 
     return {
       text: text,
-      from: Google.langMapReverse.get(result[2]) || "auto",
+      from: Google.langMapReverse.get(result.data[2]) || "auto",
       to,
       origin: {
-        paragraphs: text.split(/\n+/)
+        paragraphs: text.split(/\n+/),
+        tts:
+          (await this.textToSpeech(text, from, {
+            base: result.base,
+            token: this.token.value
+          })) || ""
       },
       trans: {
-        paragraphs: transParagraphs
+        paragraphs: transText.split(/(\n ?)+/),
+        tts:
+          (await this.textToSpeech(transText, to, {
+            base: result.base,
+            token: this.token.value
+          })) || ""
       }
     };
   }
@@ -197,6 +272,38 @@ export class Google extends Translator<GoogleConfig> {
     } catch (e) {
       return "auto";
     }
+  }
+
+  async textToSpeech(
+    text: string,
+    lang: Language,
+    meta?: {
+      base: string;
+      token?: {
+        tk1: number;
+        tk2: number;
+      };
+    }
+  ): Promise<string | null> {
+    let tld = "com";
+    let base = "https://translate.google.com";
+
+    if (meta && meta.base) {
+      const tldMatch = /\.(\w+)$/.exec(meta.base);
+      if (tldMatch) {
+        tld = tldMatch[1];
+        base = meta.base;
+      }
+    }
+
+    return (
+      `${base}/translate_tts?ie=UTF-8&total=1&idx=0&client=t&` +
+      qs.stringify({
+        q: text,
+        tl: Google.langMapReverse.get(lang) || "en",
+        tk: await getTK(text, tld)
+      })
+    );
   }
 }
 
