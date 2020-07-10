@@ -23,6 +23,7 @@
   "author": "OpenTranslate",
   "license": "MIT",
   "dependencies": {
-    "@opentranslate/translator": "^1.4.0"
+    "@opentranslate/translator": "^1.4.0",
+    "google-translate-open-api": "^1.3.4"
   }
 }
