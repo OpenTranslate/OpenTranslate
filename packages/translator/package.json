@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Common APIs of translator in OpenTranslate Standard.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,7 +23,7 @@
   "author": "OpenTranslate",
   "license": "MIT",
   "dependencies": {
-    "@opentranslate/languages": "^1.4.0",
+    "@opentranslate/languages": "^1.4.1",
     "axios": "^0.19.0",
     "franc-min": "^4.1.0"
   }

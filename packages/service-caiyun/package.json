@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Caiyun translator with OpenTranslate API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,7 +23,7 @@
   "author": "OpenTranslate",
   "license": "MIT",
   "dependencies": {
-    "@opentranslate/translator": "^1.4.0",
+    "@opentranslate/translator": "^1.4.1",
     "@types/node": "^12.11.7",
     "@types/qs": "^6.5.3",
     "qs": "^6.8.0"
