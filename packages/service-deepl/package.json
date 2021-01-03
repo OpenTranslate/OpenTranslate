@@ -1,0 +1,30 @@
+{
+  "name": "@opentranslate/deepl",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.4.1",
+  "description": "DeepL translator with OpenTranslate API.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "keywords": [
+    "OpenTranslate",
+    "translate",
+    "translator"
+  ],
+  "repository": "OpenTranslate/OpenTranslate",
+  "homepage": "https://github.com/OpenTranslate/OpenTranslate/tree/master/packages/service-deepl",
+  "bugs": "https://github.com/opentranslate/opentranslate/issues/",
+  "author": "OpenTranslate",
+  "license": "MIT",
+  "dependencies": {
+    "@opentranslate/translator": "^1.4.1",
+    "@types/qs": "^6.5.3",
+    "qs": "^6.8.0"
+  }
+}
