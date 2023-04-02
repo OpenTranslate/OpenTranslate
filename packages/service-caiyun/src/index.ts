@@ -40,13 +40,13 @@ export class Caiyun extends Translator<CaiyunConfig> {
   }
 
   async textToSpeech(text: string, lang: Language): Promise<string> {
-    return `http://tts.baidu.com/text2audio?${qs.stringify({
+    return `https://fanyi.baidu.com/gettts?${qs.stringify({
       lan: Caiyun.langMap.get(lang !== "auto" ? lang : "zh-CN") || "zh",
-      ie: "UTF-8",
+      text,
       spd: 5,
-      text
     })}`;
   }
+  
 
   protected async query(
     text: string,
