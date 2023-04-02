@@ -137,7 +137,7 @@ export class Baidu extends Translator<BaiduConfig> {
     return `https://fanyi.baidu.com/gettts?${qs.stringify({
       lan: Baidu.langMap.get(lang !== "auto" ? lang : "zh-CN") || "zh",
       text,
-      spd: 3,
+      spd: 5,
     })}`;
   }  
 }
