@@ -134,13 +134,12 @@ export class Baidu extends Translator<BaiduConfig> {
   }
 
   async textToSpeech(text: string, lang: Language): Promise<string> {
-    return `http://tts.baidu.com/text2audio?${qs.stringify({
+    return `https://fanyi.baidu.com/gettts?${qs.stringify({
       lan: Baidu.langMap.get(lang !== "auto" ? lang : "zh-CN") || "zh",
-      ie: "UTF-8",
+      text,
       spd: 5,
-      text
     })}`;
-  }
+  }  
 }
 
 export default Baidu;
