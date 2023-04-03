@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Baidu domain translator with OpenTranslate API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,6 +23,6 @@
   "author": "OpenTranslate",
   "license": "MIT",
   "dependencies": {
-    "@opentranslate/translator": "^1.4.1"
+    "@opentranslate/translator": "^1.4.2"
   }
 }
