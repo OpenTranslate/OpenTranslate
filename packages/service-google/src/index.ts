@@ -196,7 +196,7 @@ export class Google extends Translator<GoogleConfig> {
           q: text
         })
     );
-    return { base: "https://translate.google.cn", data };
+    return { base: "https://translate.google.com", data };
   }
 
   config: GoogleConfig = {
